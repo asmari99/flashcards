@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>بطاقاتي التعليمية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SheetJS لقراءة ملفات Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #f1f8e9, #e0f7fa);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
+    }
+    header {
+      padding: 40px 20px 20px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #00695c;
+    }
+    p {
+      font-size: 18px;
+      color: #555;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 40px 0;
+      width: 90%;
+      max-width: 300px;
+    }
+    button {
+      background-color: #00897b;
+      color: white;
+      font-size: 17px;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    .footer-note {
+      margin-top: auto;
+      padding: 20px;
+      font-size: 13px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>👋 مرحبًا بك في بطاقاتي التعليمية</h1>
+    <p>ابدأ رحلتك الممتعة في التعلّم 👇</p>
+  </header>
+
+  <div class="buttons">
+    <button onclick="document.getElementById('upload').click()">⬆️ تحميل ملف الدروس (Excel)</button>
+    <input type="file" id="upload" accept=".xlsx,.xls" style="display:none" onchange="handleUpload()" />
+
+    <button onclick="window.location.href='flashcards.html'">📚 استعراض الدروس</button>
+    <button onclick="startHardCards()">📌 مراجعة البطاقات الصعبة</button>
+  </div>
+
+  <div class="footer-note">
+    جميع بياناتك تُحفظ محليًا على جهازك — خصوصيتك بأمان 🔐
+  </div>
+
+  <script>
+    function handleUpload() {
+      const file = document.getElementById("upload").files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const allFlashcards = {};
+
+        jsonData.forEach(row => {
+          const lesson = row['lesson'] || "درس غير محدد";
+          if (!allFlashcards[lesson]) allFlashcards[lesson] = [];
+
+          allFlashcards[lesson].push({
+            frontWord: row['الكلمة'] || "",
+            backTranslation: row['الترجمة'] || "",
+            backSentenceEn: row['الجملة الإنجليزية'] || "",
+            backSentenceAr: row['الجملة العربية'] || "",
+            image: row['الصورة'] || ""
+          });
+        });
+
+        localStorage.setItem("allFlashcardsByLesson", JSON.stringify(allFlashcards));
+        alert("✅ تم تحليل الملف وتخزين الدروس بنجاح! توجه إلى صفحة البطاقات.");
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    function startHardCards() {
+      const saved = JSON.parse(localStorage.getItem('hardCards') || '{}');
+      const lessons = Object.keys(saved);
+      if (lessons.length === 0) {
+        alert("📌 لا توجد بطاقات صعبة محفوظة بعد.");
+        return;
+      }
+      alert("📌 راح يتم توجيهك لواجهة المراجعة… (ميزة قادمة)");
+    }
+  </script>
+
+</body>
+</html>
