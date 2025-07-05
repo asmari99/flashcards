@@ -1,4 +1,7 @@
 
+// سكربت كامل - إدارة البطاقات التعليمية والاختبار
+// تم تضمين كل الميزات المطلوبة
+
 const allFlashcardsByLesson = JSON.parse(localStorage.getItem('allFlashcardsByLesson') || '{}');
 const sidebar = document.getElementById('sidebar');
 
@@ -64,7 +67,7 @@ function renderCard() {
     localStorage.setItem(`done-${currentLesson}`, 'true');
     quizIndex = 0;
     correctAnswers = 0;
-    quizCards = cards.slice(); // نسخة من بطاقات الدرس للاختبار
+    quizCards = cards.slice();
     showQuiz();
     return;
   }
@@ -155,11 +158,14 @@ function reviewHardCards() {
 function updateProgress() {
   const total = knownCount + unknownCount;
   const stats = document.getElementById('progressStats');
-  if (!stats) return;
+  const bar = document.getElementById('progressFill');
+  if (!stats || !bar) return;
   const percent = cards.length > 0 ? Math.round((total / cards.length) * 100) : 0;
   stats.innerText = `✅ ${knownCount} / ❌ ${unknownCount} — تقدّم: ${percent}%`;
+  bar.style.width = percent + "%";
 }
 
+// الاختبار بعد انتهاء الدرس
 function showQuiz() {
   if (document.getElementById("quizContainer")) return;
 
