@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>بطاقاتي التعليمية</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -81,8 +82,34 @@
     function handleUpload() {
       const file = document.getElementById("upload").files[0];
       if (!file) return;
-      alert("📦 تم رفع الملف! (ميزة التحليل غير مفعلة في هذه النسخة — ربط لاحقًا)");
-      // ملاحظة: في النسخة المستقبلية، هنا يتم قراءة الملف وتحويله إلى JSON وتخزينه في localStorage
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const allFlashcards = {};
+        jsonData.forEach(row => {
+          const lesson = row['lesson'] || "درس غير محدد";
+          if (!allFlashcards[lesson]) allFlashcards[lesson] = [];
+
+          allFlashcards[lesson].push({
+            frontWord: row['الكلمة'] || "",
+            backTranslation: row['الترجمة'] || "",
+            backSentenceEn: row['الجملة الإنجليزية'] || "",
+            backSentenceAr: row['الجملة العربية'] || "",
+            image: row['الصورة'] || ""
+          });
+        });
+
+        localStorage.setItem("allFlashcardsByLesson", JSON.stringify(allFlashcards));
+        alert("✅ تم تحليل الملف وتخزين الدروس بنجاح! توجه إلى صفحة البطاقات.");
+      };
+
+      reader.readAsArrayBuffer(file);
     }
 
     function startHardCards() {
@@ -92,10 +119,17 @@
         alert("📌 لا توجد بطاقات صعبة محفوظة بعد.");
         return;
       }
-      // سيتم توجيه المستخدم لاحقًا إلى صفحة فيها هذه البطاقات
       alert("📌 راح يتم توجيهك لواجهة المراجعة… (ميزة قادمة)");
     }
   </script>
 
 </body>
 </html>
+"""
+
+# حفظ index.html
+index_path = "/mnt/data/index.html"
+with open(index_path, "w", encoding="utf-8") as f:
+    f.write(index_html_content)
+
+index_path
