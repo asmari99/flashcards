@@ -1,8 +1,6 @@
-/* styles.css */
-
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom right, #e1f5fe, #fff3e0);
+  background: linear-gradient(145deg, #e0f7fa, #f1f8e9);
   margin: 0;
   direction: rtl;
 }
@@ -12,7 +10,6 @@ body {
   min-height: 100vh;
 }
 
-/* القائمة الجانبية */
 .sidebar {
   width: 220px;
   background-color: #004d40;
@@ -20,11 +17,6 @@ body {
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
-}
-
-.sidebar h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
 }
 
 .sidebar button {
@@ -38,6 +30,7 @@ body {
   font-size: 15px;
   cursor: pointer;
   border-radius: 8px;
+  transition: background 0.3s;
 }
 
 .sidebar button:hover,
@@ -45,7 +38,14 @@ body {
   background-color: #00796b;
 }
 
-/* المحتوى */
+.sidebar button.done {
+  background-color: #388e3c;
+}
+
+.sidebar button.done::after {
+  content: " ✅";
+}
+
 .content {
   flex: 1;
   padding: 30px;
@@ -55,6 +55,21 @@ body {
 h2 {
   color: #333;
   margin-bottom: 10px;
+}
+
+.progress-bar {
+  background: #eee;
+  height: 8px;
+  width: 80%;
+  border-radius: 10px;
+  margin: 15px auto;
+  overflow: hidden;
+}
+.progress {
+  background: #4CAF50;
+  height: 100%;
+  width: 0%;
+  transition: width 0.5s ease-in-out;
 }
 
 .card-container {
@@ -68,13 +83,15 @@ h2 {
   height: 440px;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.7s ease-in-out;
+  transition: transform 0.7s ease-in-out, box-shadow 0.3s;
   cursor: pointer;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   background-color: #fff;
 }
-
+.card:hover {
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
 .card.flipped {
   transform: rotateY(180deg);
 }
@@ -146,21 +163,20 @@ button, input[type="range"] {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .btn-green { background-color: #4CAF50; color: white; }
 .btn-red { background-color: #F44336; color: white; }
 .btn-sound { background-color: #039BE5; color: white; }
+
 .speed-control {
   font-size: 14px;
   color: #444;
   margin-top: 10px;
-}
-.sidebar button.done {
-  background-color: #388e3c;
-  color: #fff;
-}
-
-.sidebar button.done::after {
-  content: " ✅";
 }
